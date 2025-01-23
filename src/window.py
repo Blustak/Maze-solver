@@ -1,3 +1,4 @@
+
 from tkinter import Tk, BOTH, Canvas
 
 class Window:
@@ -15,6 +16,9 @@ class Window:
         self.__root.update_idletasks()
         self.__root.update()
 
+    def draw_line(self, line, fill_color):
+       line.draw(self.canvas, fill_color) 
+
     def wait_for_close(self):
         self.running = True
         while self.running:
@@ -23,9 +27,3 @@ class Window:
     def close(self):
         self.running = False
 
-def main():
-    win = Window(800,600)
-    win.wait_for_close()
-
-if __name__ == "__main__":
-    main()
