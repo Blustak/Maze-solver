@@ -1,3 +1,4 @@
+BG_COLOR = "white"
 
 from tkinter import Tk, BOTH, Canvas
 
@@ -8,7 +9,8 @@ class Window:
         self.__root = Tk()
         self.__root.wm_title("Maze solver")
         self.__root.protocol("WM_DELETE_WINDOW", self.close)
-        self.canvas = Canvas(width=self.width, height=self.height)
+        self.canvas = Canvas(background=BG_COLOR, width=self.width,
+                             height=self.height, bd=1)
         self.canvas.pack()
         self.running = False
 
