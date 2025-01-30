@@ -1,14 +1,9 @@
 from window import Window
-from cell import Cell
+from maze import Maze
+
 def main():
     win = Window(800,600)
-    cells = [
-        Cell(0,0, win, True, True, True, True),
-        Cell(1,1, win, False,False,False,True),
-        Cell(5,0,win, True,True,True,True),
-    ]
-    for cell in cells:
-        cell.draw()
+    _ = Maze(10,10,5,5,50,50,win)
     win.wait_for_close()
 
 if __name__ == "__main__":
