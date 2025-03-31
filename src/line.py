@@ -8,8 +8,9 @@ class Line:
         self.a = point_a
         self.b = point_b
 
-    def draw(self, canvas:tk.Canvas, fill_color):
+    def draw(self, canvas:tk.Canvas, fill_color:str):
         assert isinstance(canvas, tk.Canvas)
+        assert len(fill_color) > 0 and isinstance(fill_color, str)
 
         x1 = self.a.x
         x2 = self.b.x
