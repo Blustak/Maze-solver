@@ -1,8 +1,21 @@
 from point import Point
 from line import Line
 from window import Window
+from enum import Enum, StrEnum, auto
 
-CellColors = {"wall": "black", "path": "grey", "undo": "red"}
+
+class CellColor(StrEnum):
+    EMPTY = "white"
+    WALL = "black"
+    PATH = "red"
+    UNDO = "grey"
+
+
+class WallType(Enum):
+    LEFT = auto()
+    RIGHT = auto()
+    TOP = auto()
+    BOTTOM = auto()
 
 
 class Cell:
@@ -18,8 +31,9 @@ class Cell:
         self._x2 = origin.x + width
         self._y2 = origin.y + height
         self._win = window
+        self.visited = False
 
-    def draw(self, color=CellColors["wall"]):
+    def draw(self):
         if not self._win:
             return
         top_left = Point(self._x1, self._y1)
@@ -33,21 +47,31 @@ class Cell:
         bottom_wall = Line(bottom_left, bottom_right)
 
         canvas = self._win.canvas
+        left_wall.draw(
+            canvas,
+            (CellColor.WALL if self.has_left_wall else CellColor.EMPTY),
+        )
 
-        if self.has_left_wall:
-            left_wall.draw(canvas, color)
-        if self.has_right_wall:
-            right_wall.draw(canvas, color)
-        if self.has_top_wall:
-            top_wall.draw(canvas, color)
-        if self.has_bottom_wall:
-            bottom_wall.draw(canvas, color)
+        right_wall.draw(
+            canvas,
+            (CellColor.WALL if self.has_right_wall else CellColor.EMPTY),
+        )
+
+        top_wall.draw(
+            canvas,
+            (CellColor.WALL if self.has_top_wall else CellColor.EMPTY),
+        )
+
+        bottom_wall.draw(
+            canvas,
+            (CellColor.WALL if self.has_bottom_wall else CellColor.EMPTY),
+        )
 
     def draw_move(self, other, undo=False):
         if not self._win:
             return
         path = Line(self.get_center(), other.get_center())
-        color = CellColors["path"] if undo else CellColors["undo"]
+        color = CellColor.PATH if undo else CellColor.UNDO
         path.draw(self._win.canvas, color)
 
     def get_center(self) -> Point:
