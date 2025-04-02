@@ -2,14 +2,13 @@ from point import Point
 from line import Line
 from window import Window
 
-CellColors={
-        "wall":"black",
-        "path":"grey",
-        "undo":"red"
-        }
+CellColors = {"wall": "black", "path": "grey", "undo": "red"}
+
 
 class Cell:
-    def __init__(self, origin:Point, height:int, width:int, window:Window):
+    def __init__(
+        self, origin: Point, height: int, width: int, window: Window | None
+    ):
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_bottom_wall = True
@@ -21,6 +20,8 @@ class Cell:
         self._win = window
 
     def draw(self, color=CellColors["wall"]):
+        if not self._win:
+            return
         top_left = Point(self._x1, self._y1)
         bottom_right = Point(self._x2, self._y2)
         bottom_left = Point(self._x1, self._y2)
@@ -43,12 +44,14 @@ class Cell:
             bottom_wall.draw(canvas, color)
 
     def draw_move(self, other, undo=False):
+        if not self._win:
+            return
         path = Line(self.get_center(), other.get_center())
         color = CellColors["path"] if undo else CellColors["undo"]
         path.draw(self._win.canvas, color)
 
-
-
-    def get_center(self)->Point:
-        return Point(self._x1 + ((self._x2 - self._x1)/2), self._y1 +
-                     ((self._y2 - self._y1)/2))
+    def get_center(self) -> Point:
+        return Point(
+            self._x1 + ((self._x2 - self._x1) / 2),
+            self._y1 + ((self._y2 - self._y1) / 2),
+        )

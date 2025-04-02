@@ -1,15 +1,12 @@
 from window import Window
-from cell import Cell
-from point import Point
+from maze import Maze
+
 
 def main():
     win = Window(800, 600)
-    a = Cell(Point(10, 10),50,50,win)
-    b = Cell(Point(500, 40),30,50,win)
-    a.draw()
-    b.draw()
-    a.draw_move(b, False)
+    maze = Maze(10, 10, 5, 5, 20, 20, win)
     win.wait_for_close()
+
 
 if __name__ == "__main__":
     main()

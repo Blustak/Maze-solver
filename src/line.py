@@ -1,14 +1,15 @@
 from point import Point
 import tkinter as tk
 
+
 class Line:
-    def __init__(self, point_a:Point, point_b:Point):
-        assert isinstance(point_a,Point)
-        assert isinstance(point_b,Point)
+    def __init__(self, point_a: Point, point_b: Point):
+        assert isinstance(point_a, Point)
+        assert isinstance(point_b, Point)
         self.a = point_a
         self.b = point_b
 
-    def draw(self, canvas:tk.Canvas, fill_color:str):
+    def draw(self, canvas: tk.Canvas, fill_color: str):
         assert isinstance(canvas, tk.Canvas)
         assert len(fill_color) > 0 and isinstance(fill_color, str)
 
