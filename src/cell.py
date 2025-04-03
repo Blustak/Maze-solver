@@ -13,14 +13,25 @@ class WallType(Enum):
 
 class Cell:
     def __init__(self, origin: Point, window: Window | None):
-        self.has_left_wall = True
-        self.has_right_wall = True
-        self.has_bottom_wall = True
-        self.has_top_wall = True
+        self._has_left_wall = True
+        self._has_right_wall = True
+        self._has_bottom_wall = True
+        self._has_top_wall = True
         self._x1 = origin.x
         self._y1 = origin.y
         self._win = window
         self.visited = False
+
+    def has_wall(self, wall: WallType):
+        match wall:
+            case WallType.LEFT:
+                return self._has_left_wall
+            case WallType.RIGHT:
+                return self._has_right_wall
+            case WallType.TOP:
+                return self._has_top_wall
+            case WallType.BOTTOM:
+                return self._has_bottom_wall
 
     def draw(self, x, y, cell_width, cell_height):
         if not self._win:
@@ -38,22 +49,22 @@ class Cell:
         canvas = self._win.canvas
         left_wall.draw(
             canvas,
-            (ColorType.WALL if self.has_left_wall else ColorType.BACKGROUND),
+            (ColorType.WALL if self._has_left_wall else ColorType.BACKGROUND),
         )
 
         right_wall.draw(
             canvas,
-            (ColorType.WALL if self.has_right_wall else ColorType.BACKGROUND),
+            (ColorType.WALL if self._has_right_wall else ColorType.BACKGROUND),
         )
 
         top_wall.draw(
             canvas,
-            (ColorType.WALL if self.has_top_wall else ColorType.BACKGROUND),
+            (ColorType.WALL if self._has_top_wall else ColorType.BACKGROUND),
         )
 
         bottom_wall.draw(
             canvas,
-            (ColorType.WALL if self.has_bottom_wall else ColorType.BACKGROUND),
+            (ColorType.WALL if self._has_bottom_wall else ColorType.BACKGROUND),
         )
 
     def draw_move(
