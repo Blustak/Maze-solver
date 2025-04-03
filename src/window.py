@@ -1,5 +1,13 @@
 from tkinter import Tk, BOTH, Canvas
 from line import Line
+from enum import StrEnum
+
+
+class ColorType(StrEnum):
+    BACKGROUND = "white"
+    WALL = "black"
+    PATH = "grey"
+    UNDO = "red"
 
 
 class Window:
@@ -7,7 +15,12 @@ class Window:
         self.__root = Tk()
         self.__root.wm_title("Python Maze Solver")
         self.__root.protocol("WM_DELETE_WINDOW", self.close)
-        self.canvas = Canvas(self.__root, width=width, height=height)
+        self.canvas = Canvas(
+            self.__root,
+            width=width,
+            height=height,
+            background=ColorType.BACKGROUND,
+        )
         self.canvas.pack()
         self.is_running = False
 
@@ -23,5 +36,5 @@ class Window:
     def close(self):
         self.is_running = False
 
-    def draw_line(self, line: Line, fill_color: str):
+    def draw_line(self, line: Line, fill_color: ColorType):
         line.draw(self.canvas, fill_color)

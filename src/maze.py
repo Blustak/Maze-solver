@@ -17,6 +17,8 @@ class Maze:
         win=None,
         seed=None,
     ):
+        assert num_rows > 0
+        assert num_cols > 0
         self._x1 = x1
         self._y1 = y1
         self._num_rows = num_rows
@@ -45,12 +47,7 @@ class Maze:
             for y in range(self._num_rows):
                 col.append(
                     Cell(
-                        Point(
-                            self._x1 + x * self._cell_size_x,
-                            self._y1 + y * self._cell_size_y,
-                        ),
-                        self._cell_size_y,
-                        self._cell_size_x,
+                        Point(x, y),
                         self._win,
                     )
                 )
@@ -96,7 +93,7 @@ class Maze:
                 to_visit.append(((WallType.BOTTOM, WallType.TOP), (i, j + 1)))
 
             if len(to_visit) == 0:
-                self._cells[i][j].draw()
+                self._draw_cell(i, j)
                 return
             else:
                 (walls_to_destroy, next_coord) = random.choice(to_visit)
@@ -120,7 +117,9 @@ class Maze:
 
     def _draw_cell(self, i: int, j: int):
         cell = self._cells[i][j]
-        cell.draw()
+        x = self._x1 + (i * self._cell_size_x)
+        y = self._y1 + (j * self._cell_size_y)
+        cell.draw(x, y, self._cell_size_x, self._cell_size_y)
         self._animate()
 
     def _animate(self):
