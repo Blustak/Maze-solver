@@ -33,6 +33,17 @@ class Cell:
             case WallType.BOTTOM:
                 return self._has_bottom_wall
 
+    def set_wall(self, wall: WallType, b: bool = True):
+        match wall:
+            case WallType.LEFT:
+                self._has_left_wall = b
+            case WallType.RIGHT:
+                self._has_right_wall = b
+            case WallType.TOP:
+                self._has_top_wall = b
+            case WallType.BOTTOM:
+                self._has_bottom_wall = b
+
     def draw(self, x, y, cell_width, cell_height):
         if not self._win:
             return
@@ -82,7 +93,7 @@ class Cell:
             self.get_center(origin, cell_width, cell_height),
             other.get_center(destination, cell_width, cell_height),
         )
-        color = ColorType.PATH if undo else ColorType.UNDO
+        color = str(ColorType.PATH if undo else ColorType.UNDO)
         path.draw(self._win.canvas, color)
 
     def get_center(self, p: Point, cell_width, cell_height) -> Point:

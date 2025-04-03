@@ -39,6 +39,53 @@ class Maze:
         self._create_cells()
         self._break_entrance_and_exit()
         self._break_walls_r(0, 0)
+        self._reset_cells_visited()
+
+    def solve(self):
+        return self._solve_r(0, 0)
+
+    def _solve_r(self, i, j):
+        print(f"At cell {i}, {j}")
+        self._animate()
+        cell: Cell = self._cells[i][j]
+        self._cells[i][j].visited = True
+        if i == len(self._cells) - 1 and j == len(self._cells[i]) - 1:
+            print(f"At the end. Returning true...")
+            return True
+        for dx, dy, wall in (
+            (-1, 0, WallType.LEFT),
+            (1, 0, WallType.RIGHT),
+            (0, -1, WallType.TOP),
+            (0, 1, WallType.BOTTOM),
+        ):
+            i_other = i + dx
+            j_other = j + dy
+            print(f"Searching {wall} ({i_other}, {j_other})")
+
+            if i_other in range(len(self._cells)) and j_other in range(
+                len(self._cells[i_other])
+            ):
+                cell_other = self._cells[i_other][j_other]
+                if not cell.has_wall(wall) and not cell_other.visited:
+                    cell.draw_move(
+                        cell_other,
+                        self._get_cell_origin(i, j),
+                        self._get_cell_origin(i_other, j_other),
+                        self._cell_size_x,
+                        self._cell_size_y,
+                    )
+                    if self._solve_r(i_other, j_other):
+                        return True
+                    else:
+                        cell.draw_move(
+                            cell_other,
+                            self._get_cell_origin(i, j),
+                            self._get_cell_origin(i_other, j_other),
+                            self._cell_size_x,
+                            self._cell_size_y,
+                            undo=True,
+                        )
+        return False
 
     def _create_cells(self):
         self._cells: List[List[Cell]] = []
@@ -57,17 +104,7 @@ class Maze:
                 self._draw_cell(i, j)
 
     def _break_wall(self, i: int, j: int, wall: WallType):
-        match wall:
-            case WallType.LEFT:
-                self._cells[i][j].has_left_wall = False
-            case WallType.RIGHT:
-                self._cells[i][j].has_right_wall = False
-            case WallType.TOP:
-                self._cells[i][j].has_top_wall = False
-            case WallType.BOTTOM:
-                self._cells[i][j].has_bottom_wall = False
-            case _:
-                raise Exception("Unreachable")
+        self._cells[i][j].set_wall(wall, False)
         self._draw_cell(i, j)
 
     def _break_walls_r(self, i, j):
@@ -121,11 +158,16 @@ class Maze:
                 cell.visited = False
 
     def _draw_cell(self, i: int, j: int):
+        o = self._get_cell_origin(i, j)
+        x, y = o.x, o.y
         cell = self._cells[i][j]
-        x = self._x1 + (i * self._cell_size_x)
-        y = self._y1 + (j * self._cell_size_y)
         cell.draw(x, y, self._cell_size_x, self._cell_size_y)
         self._animate()
+
+    def _get_cell_origin(self, i, j) -> Point:
+        x = self._x1 + (i * self._cell_size_x)
+        y = self._y1 + (j * self._cell_size_y)
+        return Point(x, y)
 
     def _animate(self):
         if self._win:
