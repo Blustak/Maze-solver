@@ -1,14 +1,7 @@
 from point import Point
 from line import Line
-from window import Window
-from enum import Enum, StrEnum, auto
-
-
-class CellColor(StrEnum):
-    EMPTY = "white"
-    WALL = "black"
-    PATH = "red"
-    UNDO = "grey"
+from window import Window, ColorType
+from enum import Enum, auto
 
 
 class WallType(Enum):
@@ -19,27 +12,23 @@ class WallType(Enum):
 
 
 class Cell:
-    def __init__(
-        self, origin: Point, height: int, width: int, window: Window | None
-    ):
+    def __init__(self, origin: Point, window: Window | None):
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_bottom_wall = True
         self.has_top_wall = True
         self._x1 = origin.x
         self._y1 = origin.y
-        self._x2 = origin.x + width
-        self._y2 = origin.y + height
         self._win = window
         self.visited = False
 
-    def draw(self):
+    def draw(self, x, y, cell_width, cell_height):
         if not self._win:
             return
-        top_left = Point(self._x1, self._y1)
-        bottom_right = Point(self._x2, self._y2)
-        bottom_left = Point(self._x1, self._y2)
-        top_right = Point(self._x2, self._y1)
+        top_left = Point(x, y)
+        bottom_right = Point(x + cell_width, y + cell_height)
+        bottom_left = Point(x, y + cell_height)
+        top_right = Point(x + cell_width, y)
 
         left_wall = Line(top_left, bottom_left)
         right_wall = Line(top_right, bottom_right)
@@ -49,33 +38,41 @@ class Cell:
         canvas = self._win.canvas
         left_wall.draw(
             canvas,
-            (CellColor.WALL if self.has_left_wall else CellColor.EMPTY),
+            (ColorType.WALL if self.has_left_wall else ColorType.BACKGROUND),
         )
 
         right_wall.draw(
             canvas,
-            (CellColor.WALL if self.has_right_wall else CellColor.EMPTY),
+            (ColorType.WALL if self.has_right_wall else ColorType.BACKGROUND),
         )
 
         top_wall.draw(
             canvas,
-            (CellColor.WALL if self.has_top_wall else CellColor.EMPTY),
+            (ColorType.WALL if self.has_top_wall else ColorType.BACKGROUND),
         )
 
         bottom_wall.draw(
             canvas,
-            (CellColor.WALL if self.has_bottom_wall else CellColor.EMPTY),
+            (ColorType.WALL if self.has_bottom_wall else ColorType.BACKGROUND),
         )
 
-    def draw_move(self, other, undo=False):
+    def draw_move(
+        self,
+        other,
+        origin: Point,
+        destination: Point,
+        cell_width,
+        cell_height,
+        undo=False,
+    ):
         if not self._win:
             return
-        path = Line(self.get_center(), other.get_center())
-        color = CellColor.PATH if undo else CellColor.UNDO
+        path = Line(
+            self.get_center(origin, cell_width, cell_height),
+            other.get_center(destination, cell_width, cell_height),
+        )
+        color = ColorType.PATH if undo else ColorType.UNDO
         path.draw(self._win.canvas, color)
 
-    def get_center(self) -> Point:
-        return Point(
-            self._x1 + ((self._x2 - self._x1) / 2),
-            self._y1 + ((self._y2 - self._y1) / 2),
-        )
+    def get_center(self, p: Point, cell_width, cell_height) -> Point:
+        return Point(p.x + (cell_width / 2), p.y + (cell_height / 2))
