@@ -115,6 +115,11 @@ class Maze:
             self._num_cols - 1, self._num_rows - 1, WallType.BOTTOM
         )
 
+    def _reset_cells_visited(self):
+        for x in self._cells:
+            for cell in x:
+                cell.visited = False
+
     def _draw_cell(self, i: int, j: int):
         cell = self._cells[i][j]
         x = self._x1 + (i * self._cell_size_x)
