@@ -108,11 +108,11 @@ class Maze:
         self._draw_cell(i, j)
 
     def _break_walls_r(self, i, j):
+        to_visit = []
         self._cells[i][j].visited = True
         can_traverse = True
         while can_traverse:
             can_traverse = False
-            to_visit = []
             if i > 0 and not self._cells[i - 1][j].visited:
                 # There are cells to our left
                 to_visit.append(((WallType.LEFT, WallType.RIGHT), (i - 1, j)))
